@@ -1,0 +1,46 @@
+{% extends 'base/kernel-ci-base-tftp-deploy.jinja2' %}
+{% block metadata %}
+{{ super() }}
+{% endblock %}
+{% block main %}
+{{ super() }}
+{% endblock %}
+{% block actions %}
+{%- block deploy %}
+{{ super () }}
+{%- endblock %}
+{% block kernel_image_type %}
+{%- endblock %}
+
+- boot:
+    timeout:
+      minutes: 5
+    method: depthcharge
+    commands: ramdisk
+    prompts:
+      - 'linaro-test'
+      - 'root@debian:~#'
+      - '/ #'
+
+- test:
+    timeout:
+      minutes: 10
+    definitions:
+    - repository:
+        metadata:
+          format: Lava-Test Test Definition 1.0
+          name: sleep
+          description: "sleep test plan"
+          os:
+          - oe
+          scope:
+          - functional
+        run:
+          steps:
+          - lava-test-case rtcwake-mem --shell rtcwake -d rtc0 -m mem -s 1
+          - lava-test-case rtcwake-freeze --shell rtcwake -d rtc0 -m freeze -s 1
+      from: inline
+      name: sleep
+      path: inline/sleep.yaml
+
+{% endblock %}

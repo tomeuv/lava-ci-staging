@@ -1,0 +1,4 @@
+- skip power states not in /sys/power/state
+- probably loop a few times (at least two)
+- may need to configure RTCs other than rtc0
+- find a way to not replicate the actual test cases in each template
