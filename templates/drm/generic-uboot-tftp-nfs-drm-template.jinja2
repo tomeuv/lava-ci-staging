@@ -1,0 +1,71 @@
+{% extends 'base/kernel-ci-base-tftp-deploy.jinja2' %}
+{% block metadata %}
+{{ super() }}
+{% endblock %}
+{% block main %}
+{{ super() }}
+{% endblock %}
+{% block actions %}
+{%- block deploy %}
+{{ super () }}
+{%- endblock %}
+
+- boot:
+    timeout:
+      minutes: 5
+    method: u-boot
+    commands: nfs
+    prompts:
+      - 'linaro-test'
+      - 'root@debian:~#'
+      - '/ #'
+    auto_login:
+      login_prompt: "login:"
+      username: root
+
+- test:
+    timeout:
+      minutes: 10
+    definitions:
+    - repository:
+        metadata:
+          format: Lava-Test Test Definition 1.0
+          name: igt
+          description: "IGT test plan"
+          os:
+          - oe
+          scope:
+          - functional
+        run:
+          steps:
+          - apt-get update
+          - apt-get -y install libdrm2 libunwind8 libcairo2 libglib2.0-0 libpciaccess0
+          - wget --no-check-certificate https://people.collabora.co.uk/~tomeu/igt-for-arm.tar.gz
+          - tar xvfz igt-for-arm.tar.gz
+          - lava-test-case core_auth --shell tests/core_auth | sed "s/Subtest /Subtest $test@/g"
+          - lava-test-case core_get_client_auth --shell tests/core_get_client_auth | sed "s/Subtest /Subtest $test@/g"
+          - lava-test-case core_getclient --shell tests/core_getclient | sed "s/Subtest /Subtest $test@/g"
+          - lava-test-case core_getstats --shell tests/core_getstats | sed "s/Subtest /Subtest $test@/g"
+          - lava-test-case core_getversion --shell tests/core_getversion | sed "s/Subtest /Subtest $test@/g"
+          - lava-test-case core_prop_blob --shell tests/core_prop_blob | sed "s/Subtest /Subtest $test@/g"
+          - lava-test-case core_setmaster_vs_auth --shell tests/core_setmaster_vs_auth | sed "s/Subtest /Subtest $test@/g"
+          - lava-test-case drm_read --shell tests/drm_read | sed "s/Subtest /Subtest $test@/g"
+          - lava-test-case kms_addfb_basic --shell tests/kms_addfb_basic | sed "s/Subtest /Subtest $test@/g"
+          - lava-test-case kms_atomic --shell tests/kms_atomic | sed "s/Subtest /Subtest $test@/g"
+          - lava-test-case kms_flip --shell tests/kms_flip | sed "s/Subtest /Subtest $test@/g"
+          - lava-test-case kms_flip_event_leak --shell tests/kms_flip_event_leak | sed "s/Subtest /Subtest $test@/g"
+          - lava-test-case kms_setmode --shell tests/kms_setmode | sed "s/Subtest /Subtest $test@/g"
+          - lava-test-case kms_vblank --shell tests/kms_vblank | sed "s/Subtest /Subtest $test@/g"
+          - lava-test-case kms_render --shell tests/kms_render | sed "s/Subtest /Subtest $test@/g"
+          - lava-test-case testdisplay --shell tests/testdisplay | sed "s/Subtest /Subtest $test@/g"
+        parse:
+          pattern: 'Subtest (?P<test_case_id>\S*):\s+(?P<result>(SUCCESS|FAIL|SKIP))'
+          fixupdict:
+            SUCCESS: pass
+            FAIL: fail
+            SKIP: skip
+      from: inline
+      name: igt
+      path: inline/igt.yaml
+
+{% endblock %}

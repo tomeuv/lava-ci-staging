@@ -150,7 +150,7 @@ def get_job_params(config, template, opts, device, build, defconfig, plan):
         initrd_url = KSELFTEST_INITRD_URL.format(initrd_arch)
     else:
         initrd_url = INITRD_URL.format(initrd_arch)
-    if 'nfs' in plan:
+    if 'nfs' or 'drm' in plan:
         nfsrootfs_url = NFSROOTFS_URL.format(initrd_arch)
         initrd_url = NFSROOTFS_INITRD_URL.format(initrd_arch)
     if build['modules']:
