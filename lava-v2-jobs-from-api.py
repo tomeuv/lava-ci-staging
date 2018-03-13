@@ -42,8 +42,11 @@ LEGACY_X86_PLATFORMS = ['x86', 'x86-kvm', 'x86-32']
 ARCHS = ['arm64', 'arm64be', 'armeb', 'armel', 'x86']
 ROOTFS_URL = 'http://storage.kernelci.org/images/rootfs/buildroot'
 INITRD_URL = '/'.join([ROOTFS_URL, '{}', 'rootfs.cpio.gz'])
-NFSROOTFS_URL = '/'.join([ROOTFS_URL, '{}', 'rootfs.tar.xz'])
 KSELFTEST_INITRD_URL = '/'.join([ROOTFS_URL, '{}', 'tests', 'rootfs.cpio.gz'])
+
+NFS_URL = 'https://images.collabora.co.uk/lava/kci-nfs-test/latest'
+NFSROOTFS_URL = '/'.join([NFS_URL, '{}', 'stretch-nfsroot.tar.gz'])
+NFSROOTFS_INITRD_URL = '/'.join([NFS_URL, '{}', 'stretch-initramfs.gz'])
 
 
 def get_builds(api, token, config):
@@ -149,7 +152,7 @@ def get_job_params(config, template, opts, device, build, defconfig, plan):
         initrd_url = INITRD_URL.format(initrd_arch)
     if 'nfs' in plan:
         nfsrootfs_url = NFSROOTFS_URL.format(initrd_arch)
-        initrd_url = None
+        initrd_url = NFSROOTFS_INITRD_URL.format(initrd_arch)
     if build['modules']:
         modules_url = urlparse.urljoin(
             storage, '/'.join([url_px, build['modules']]))
