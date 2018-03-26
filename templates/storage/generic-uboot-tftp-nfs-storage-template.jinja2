@@ -1,0 +1,28 @@
+{% extends 'base/kernel-ci-base-tftp-deploy.jinja2' %}
+{% block metadata %}
+{{ super() }}
+{% endblock %}
+{% block main %}
+{{ super() }}
+{% endblock %}
+{% block actions %}
+{%- block deploy %}
+{{ super () }}
+{%- endblock %}
+
+- boot:
+    timeout:
+      minutes: 5
+    method: u-boot
+    commands: nfs
+    prompts:
+      - 'linaro-test'
+      - 'root@debian:~#'
+      - '/ #'
+    auto_login:
+      login_prompt: "login:"
+      username: root
+
+{% include 'storage/storage.jinja2' %}
+
+{% endblock %}

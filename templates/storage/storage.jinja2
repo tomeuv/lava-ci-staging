@@ -1,0 +1,24 @@
+- test:
+    timeout:
+      minutes: 10
+    definitions:
+    - repository:
+        metadata:
+          format: Lava-Test Test Definition 1.0
+          name: igt
+          description: "Storage test plan"
+          os:
+          - oe
+          scope:
+          - functional
+        run:
+          steps:
+          - apt-get update
+          - apt-get -y install fio
+          - ls -l /dev/mmc*
+          - genfio -d /dev/mmcblk1 -b 8k -r 60 -m randwrite
+          - lava-test-case fio-basic --shell ionice -c 3 fio debian-8k-parallel-randwrite-mmcblk1.fio
+      from: inline
+      name: igt
+      path: inline/igt.yaml
+
