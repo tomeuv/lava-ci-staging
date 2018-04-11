@@ -43,6 +43,7 @@ ARCHS = ['arm64', 'arm64be', 'armeb', 'armel', 'x86']
 ROOTFS_URL = 'http://storage.kernelci.org/images/rootfs/buildroot'
 INITRD_URL = '/'.join([ROOTFS_URL, '{}', 'rootfs.cpio.gz'])
 KSELFTEST_INITRD_URL = '/'.join([ROOTFS_URL, '{}', 'tests', 'rootfs.cpio.gz'])
+V4L2_INITRD_URL = 'http://storage.kernelci.org/images/rootfs/rootfs-v4l2-{}.cpio.gz'
 
 NFS_URL = 'https://images.collabora.co.uk/lava/kci-nfs-test/latest'
 NFSROOTFS_URL = '/'.join([NFS_URL, '{}', 'stretch-nfsroot.tar.gz'])
@@ -148,6 +149,8 @@ def get_job_params(config, template, opts, device, build, defconfig, plan):
     initrd_url = None
     if 'kselftest' in plan:
         initrd_url = KSELFTEST_INITRD_URL.format(initrd_arch)
+    elif 'v4l2' in plan:
+        initrd_url = V4L2_INITRD_URL.format(initrd_arch)
     else:
         initrd_url = INITRD_URL.format(initrd_arch)
     if 'nfs' in plan:
